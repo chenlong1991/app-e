@@ -3,13 +3,13 @@
   "editor.guides.bracketPairs": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": [
-    "source.fixAll.eslint"
-  ],
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "vue"
-  ]
+  "editor.codeActionsOnSave": ["source.fixAll.eslint"],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
+  "commentTranslate.source": "intellsmi.comment-translate-ali.cloud",
+  "commentTranslate.hover.concise": true,
+  "commentTranslate.hover.string": true,
+  "commentTranslate.targetLanguage": "zh-CN",
+  "commentTranslate.maxTranslationLength": 100,
+  "commentTranslate.translationAli.accessKeyId": "LTAI5t8aHz94UG7W46PqVxqD",
+  "commentTranslate.translationAli.accessKeySecret": "LTAI5t8aHz94UG7W46PqVxqD fvNYsB4V1t5ZqI5oMiDQFOmT19g2R3"
 }
