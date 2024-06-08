@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron' // 从 electron 模块中导入 app 和 BrowserWindow
+import { app, BrowserWindow, ipcMain, Tray, nativeImage, Menu } from 'electron' // 从 electron 模块中导入 app 和 BrowserWindow
 import path from 'node:path' // 从 node:path 模块中导入 path
 import os from 'node:os' // 从 node:os 模块中导入 os
 import { fileURLToPath } from 'node:url' // 从 node:url 模块中导入 fileURLToPath
@@ -9,6 +9,7 @@ const platform = process.platform || os.platform()
 const currentDir = fileURLToPath(new URL('.', import.meta.url))
 
 let mainWindow // 声明主窗口变量
+let tray // 声明托盘变量
 
 // 创建主窗口的函数
 function createWindow() {
@@ -21,6 +22,8 @@ function createWindow() {
     height: 600,
     // 使用内容大小
     useContentSize: true,
+    // 设置无边框窗口
+    frame: false,
     // 设置 webPreferences
     webPreferences: {
       // 启用上下文隔离
@@ -35,6 +38,7 @@ function createWindow() {
       ),
     },
   })
+  console.log('icon链接：', path.resolve(currentDir, 'icons/icon.png'))
 
   // 如果是开发环境，加载开发环境的 URL
   if (process.env.DEV) {
@@ -53,15 +57,45 @@ function createWindow() {
       mainWindow.webContents.closeDevTools()
     })
   }
+}
 
-  // 监听窗口关闭事件
-  mainWindow.on('closed', () => {
-    mainWindow = null // 将主窗口变量置为 null
+// 创建托盘图标的函数
+function createTray() {
+  const trayIcon = nativeImage.createFromPath(
+    '/Users/xen/WebstormProjects/app-e/src-electron/icons/mac.png',
+  )
+  // trayIcon.setTemplateImage(true)
+  tray = new Tray(trayIcon)
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show App', // 显示应用
+      click: () => {
+        mainWindow.show() // 显示窗口
+      },
+    },
+    {
+      label: 'Quit', // 退出应用
+      click: () => {
+        app.isQuiting = true // 设置应用退出标志
+        app.quit() // 退出应用
+      },
+    },
+  ])
+
+  tray.setToolTip('My Electron App') // 设置托盘图标提示
+  tray.setContextMenu(contextMenu) // 设置托盘图标右键菜单
+
+  // 监听托盘图标点击事件
+  tray.on('click', () => {
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show() // 切换窗口显示/隐藏状态
   })
 }
 
 // 当应用准备好时，调用 createWindow 函数创建窗口
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  createWindow()
+  createTray()
+})
 
 // 监听所有窗口关闭事件
 app.on('window-all-closed', () => {
@@ -76,5 +110,25 @@ app.on('activate', () => {
   // 如果主窗口为 null，重新创建窗口
   if (mainWindow === null) {
     createWindow()
+  } else {
+    mainWindow.show() // 显示窗口
+  }
+})
+
+// 监听渲染进程的消息
+ipcMain.on('window-control', (event, action) => {
+  console.log('Received window control action:', action) // 添加日志
+  switch (action) {
+    case 'minimize':
+      mainWindow.minimize()
+      break
+    case 'maximize':
+      mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize()
+      break
+    case 'close':
+      mainWindow.close()
+      break
+    default:
+      break
   }
 })
