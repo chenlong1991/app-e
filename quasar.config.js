@@ -4,6 +4,8 @@ import { configure } from 'quasar/wrappers'
 import { fileURLToPath } from 'node:url'
 import Components from 'unplugin-vue-components/vite'
 import { QuasarResolver } from 'unplugin-vue-components/resolvers'
+import { IconSet } from 'quasar'
+import { isContext } from 'node:vm'
 
 export default configure((ctx) => {
   return {
@@ -70,6 +72,13 @@ export default configure((ctx) => {
       packager: {}, // Electron Packager 配置
       builder: {
         appId: 'app-e', // 应用 ID
+        extraResources: [
+          {
+            from: 'src-electron/icons/',
+            to: 'icons/',
+            filter: ['**/*'],
+          },
+        ],
       },
     },
     // 浏览器扩展 (BEX) 配置

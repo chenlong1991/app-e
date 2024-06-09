@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url' // 从 node:url 模块中导入 fileURL
 
 // 获取当前平台，优先使用 process.platform，如果不存在则使用 os.platform()
 const platform = process.platform || os.platform()
-// 获取当前目录路径
+// 获取当前文件的目录名
 const currentDir = fileURLToPath(new URL('.', import.meta.url))
 
 let mainWindow // 声明主窗口变量
@@ -38,7 +38,6 @@ function createWindow() {
       ),
     },
   })
-  console.log('icon链接：', path.resolve(currentDir, 'icons/icon.png'))
 
   // 如果是开发环境，加载开发环境的 URL
   if (process.env.DEV) {
@@ -61,16 +60,20 @@ function createWindow() {
 
 // 创建托盘图标的函数
 function createTray() {
-  const trayIcon = nativeImage.createFromPath(
-    '/Users/xen/WebstormProjects/app-e/src-electron/icons/mac.png',
+  const iconPath = path.resolve(
+    currentDir,
+    '../../src-electron/icons/16@2x.png',
   )
-  // trayIcon.setTemplateImage(true)
+  const trayIcon = nativeImage.createFromPath(iconPath)
+  // trayIcon.resize({ width: 12, height: 12 })
   tray = new Tray(trayIcon)
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Show App', // 显示应用
       click: () => {
-        mainWindow.show() // 显示窗口
+        if (mainWindow !== null) {
+        }
+        mainWindow.show() // 显示窗口}
       },
     },
     {
