@@ -22,8 +22,8 @@ function createWindow() {
     height: 600,
     // 使用内容大小
     useContentSize: true,
-    // 设置无边框窗口
-    frame: false,
+    titleBarStyle: 'hiddenInset',
+    trafficLightPosition: { x: 7, y: 5 },
     // 设置 webPreferences
     webPreferences: {
       // 启用上下文隔离
@@ -56,6 +56,10 @@ function createWindow() {
       mainWindow.webContents.closeDevTools()
     })
   }
+  // 监听窗口关闭事件
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
 }
 
 // 创建托盘图标的函数
@@ -71,9 +75,11 @@ function createTray() {
     {
       label: 'Show App', // 显示应用
       click: () => {
-        if (mainWindow !== null) {
+        if (mainWindow) {
+          mainWindow.show() // 显示窗口
+        } else {
+          createWindow()
         }
-        mainWindow.show() // 显示窗口}
       },
     },
     {
@@ -90,7 +96,11 @@ function createTray() {
 
   // 监听托盘图标点击事件
   tray.on('click', () => {
-    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show() // 切换窗口显示/隐藏状态
+    if (mainWindow) {
+      mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show() // 切换窗口显示/隐藏状态
+    } else {
+      createWindow()
+    }
   })
 }
 
