@@ -145,11 +145,11 @@ module.exports = {
     // Prettier 的配置
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
     // Vue 组件名称必须是多字的，忽略 "index" 和 "main"
-    'vue/multi-word-component-names': [
-      'error',
-      {
-        ignores: ['index', 'main'],
-      },
-    ],
+    // 'vue/multi-word-component-names': [
+    //   'error',
+    //   {
+    //     ignores: ['index', 'main'],
+    //   },
+    // ],
   },
 }

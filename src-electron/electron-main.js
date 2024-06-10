@@ -22,8 +22,8 @@ function createWindow() {
     height: 600,
     // 使用内容大小
     useContentSize: true,
-    // 设置无边框窗口
-    frame: false,
+    titleBarStyle: 'hiddenInset',
+    trafficLightPosition: { x: 7, y: 5 },
     // 设置 webPreferences
     webPreferences: {
       // 启用上下文隔离
@@ -56,6 +56,10 @@ function createWindow() {
       mainWindow.webContents.closeDevTools()
     })
   }
+  // 监听窗口关闭事件
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
 }
 
 // 创建托盘图标的函数
@@ -69,15 +73,17 @@ function createTray() {
   tray = new Tray(trayIcon)
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Show App', // 显示应用
+      label: '设置', // 显示应用
       click: () => {
-        if (mainWindow !== null) {
+        if (mainWindow) {
+          mainWindow.show() // 显示窗口
+        } else {
+          createWindow()
         }
-        mainWindow.show() // 显示窗口}
       },
     },
     {
-      label: 'Quit', // 退出应用
+      label: '退出应用', // 退出应用
       click: () => {
         app.isQuiting = true // 设置应用退出标志
         app.quit() // 退出应用
@@ -90,7 +96,11 @@ function createTray() {
 
   // 监听托盘图标点击事件
   tray.on('click', () => {
-    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show() // 切换窗口显示/隐藏状态
+    if (mainWindow) {
+      mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show() // 切换窗口显示/隐藏状态
+    } else {
+      createWindow()
+    }
   })
 }
 
@@ -102,10 +112,7 @@ app.whenReady().then(() => {
 
 // 监听所有窗口关闭事件
 app.on('window-all-closed', () => {
-  // 如果不是 macOS 平台，退出应用
-  if (platform !== 'darwin') {
-    app.quit()
-  }
+  mainWindow.hide() // 隐藏窗口
 })
 
 // 监听应用激活事件（通常在 macOS 上，当点击 Dock 图标时触发）

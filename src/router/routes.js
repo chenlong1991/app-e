@@ -1,6 +1,7 @@
 const routes = [
   {
     path: '/',
+    redirect: '/setting',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
   },
