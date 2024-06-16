@@ -8,7 +8,7 @@
           :active="link === 'settings'"
           @click="link = 'settings'"
           active-class="bg-grey-4 text-grey-10"
-          class="row no-wrap items-center"
+          class="row no-wrap items-center q-my-sm"
           to="/settings/translation/setting"
         >
           <q-icon name="settings" class="q-py-xs q-pr-md q-pl-md text-h5" />
@@ -21,7 +21,7 @@
           :active="link === 'help'"
           @click="link = 'help'"
           active-class="bg-grey-4 text-grey-10"
-          class="row no-wrap items-center"
+          class="row no-wrap items-center q-my-sm"
           to="/settings/translation/source"
         >
           <q-icon name="help" class="q-py-xs q-pr-md q-pl-md text-h5" />

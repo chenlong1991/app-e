@@ -57,6 +57,8 @@ module.exports = {
 
   // 自定义规则
   rules: {
+    // 一行最多160个字符
+    'max-len': ['error', { code: 160 }],
     // 关闭 prefer-promise-reject-errors 规则
     'prefer-promise-reject-errors': 'off',
     // 在生产环境中禁用 debugger
@@ -143,7 +145,12 @@ module.exports = {
       },
     ],
     // Prettier 的配置
-    'prettier/prettier': ['error', { endOfLine: 'auto' }],
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
+    ],
     // Vue 组件名称必须是多字的，忽略 "index" 和 "main"
     // 'vue/multi-word-component-names': [
     //   'error',
