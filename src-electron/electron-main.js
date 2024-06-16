@@ -5,6 +5,9 @@ import { fileURLToPath } from 'node:url' // 从 node:url 模块中导入 fileURL
 
 // 获取当前平台，优先使用 process.platform，如果不存在则使用 os.platform()
 const platform = process.platform || os.platform()
+console.log('当前平台:', platform)
+
+// 导入环境变量
 // 获取当前文件的目录名
 const currentDir = fileURLToPath(new URL('.', import.meta.url))
 
@@ -21,6 +24,7 @@ function createWindow() {
     // 设置窗口高度
     height: 600,
     // 使用内容大小
+    frame: platform !== 'win32',
     useContentSize: true,
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 7, y: 5 },
@@ -112,7 +116,7 @@ app.whenReady().then(() => {
 
 // 监听所有窗口关闭事件
 app.on('window-all-closed', () => {
-  mainWindow.hide() // 隐藏窗口
+  mainWindow = null // 隐藏窗口
 })
 
 // 监听应用激活事件（通常在 macOS 上，当点击 Dock 图标时触发）
