@@ -1,4 +1,5 @@
 const routes = [
+  { path: '/', redirect: '/settings' },
   {
     path: '/settings',
     redirect: '/settings/translation/setting',
