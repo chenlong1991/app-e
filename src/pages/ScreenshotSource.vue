@@ -1,5 +1,6 @@
 <template>
   <q-page class="flex flex-center col">
+    <div>截图源设置</div>
     <img
       alt="Quasar logo"
       src="~assets/quasar-logo-vertical.svg"
@@ -8,8 +9,4 @@
   </q-page>
 </template>
 
-<script setup>
-defineOptions({
-  name: 'IndexPage',
-})
-</script>
+<script setup></script>

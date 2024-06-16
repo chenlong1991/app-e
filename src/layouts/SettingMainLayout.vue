@@ -3,13 +3,14 @@
   <q-layout view="hHh LpR fFf">
     <SideBar></SideBar>
     <q-page-container class="fit row no-wrap">
-      <SideMenu />
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
-<script setup></script>
+<script setup>
+import SideBar from 'components/SideBar.vue'
+</script>
 <style lang="scss" scoped>
 .fixed-top {
   height: 23px;
