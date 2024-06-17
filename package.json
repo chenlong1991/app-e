@@ -14,10 +14,6 @@
     "ele": "quasar dev -m electron",
     "build": "quasar build"
   },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true
-  },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
