@@ -68,7 +68,7 @@
           v-model="model"
           :options="['自动检测', '中文', 'English', '日本語', '한국어']"
           dense
-          :options-dense="denseOpts"
+          options-dense
           class="custom"
         ></q-select>
       </div>
@@ -79,17 +79,14 @@
     >
       <div class="q-mr-xs col-2 text-right self-center">翻译窗口位置：</div>
       <div class="col-8">
-        <q-input
+        <q-select
           outlined
-          placeholder="Placeholder"
+          v-model="model"
+          :options="['居中', '鼠标位置']"
           dense
-          model-value=""
-          style="width: 300px"
-        >
-          <template v-slot:append>
-            <q-icon name="close" @click="text = ''" class="cursor-pointer" />
-          </template>
-        </q-input>
+          options-dense
+          class="custom"
+        ></q-select>
       </div>
     </div>
     <div
@@ -98,17 +95,14 @@
     >
       <div class="q-mr-xs col-2 text-right self-center">翻译窗口宽度：</div>
       <div class="col-8">
-        <q-input
+        <q-select
           outlined
-          placeholder="Placeholder"
+          v-model="model"
+          :options="['200px', '250px', '300px', '350px', '400px']"
           dense
-          model-value=""
-          style="width: 300px"
-        >
-          <template v-slot:append>
-            <q-icon name="close" @click="text = ''" class="cursor-pointer" />
-          </template>
-        </q-input>
+          options-dense
+          class="custom"
+        ></q-select>
       </div>
     </div>
     <div
@@ -117,17 +111,14 @@
     >
       <div class="q-mr-xs col-2 text-right self-center">历史记录容量：</div>
       <div class="col-8">
-        <q-input
+        <q-select
           outlined
-          placeholder="Placeholder"
+          v-model="model"
+          :options="['不记录', '50', '100', '200', '500']"
           dense
-          model-value=""
-          style="width: 300px"
-        >
-          <template v-slot:append>
-            <q-icon name="close" @click="text = ''" class="cursor-pointer" />
-          </template>
-        </q-input>
+          options-dense
+          class="custom"
+        ></q-select>
       </div>
     </div>
   </q-page>
