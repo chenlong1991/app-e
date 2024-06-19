@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, Tray, nativeImage, Menu } from 'electron' 
 import path from 'node:path' // 从 node:path 模块中导入 path
 import os from 'node:os' // 从 node:os 模块中导入 os
 import { fileURLToPath } from 'node:url' // 从 node:url 模块中导入 fileURLToPath
+import Store from 'electron-store' // 从 electron-store 模块中导入 Store
 
 // 获取当前平台，优先使用 process.platform，如果不存在则使用 os.platform()
 const platform = process.platform || os.platform()
@@ -10,6 +11,23 @@ console.log('当前平台:', platform)
 // 导入环境变量
 // 获取当前文件的目录名
 const currentDir = fileURLToPath(new URL('.', import.meta.url))
+const store = new Store({
+  encryptionKey: 'CEHNLONG19911216.',
+  defaults: {
+    translation: {
+      baidu: {
+        appid: 'abcdfrtghyt1111',
+        key: 'asdfgh',
+        isEnable: false,
+      },
+      ali: {
+        keyId: '',
+        keySecret: '',
+        isEnable: false,
+      },
+    },
+  },
+})
 
 let mainWindow // 声明主窗口变量
 let tray // 声明托盘变量
@@ -20,7 +38,7 @@ function createWindow() {
     // 设置窗口图标
     icon: path.resolve(currentDir, 'icons/icon.png'),
     // 设置窗口宽度
-    width: 1000,
+    width: 800,
     // 设置窗口高度
     height: 600,
     // 使用内容大小
@@ -108,10 +126,33 @@ function createTray() {
   })
 }
 
+// electron-store 方法
+function registerStoreIpcMain() {
+  ipcMain.handle('storeGet', (event, key) => {
+    return store.get(key)
+  })
+  ipcMain.handle('storeSet', (event, key, value) => {
+    store.set(key, value)
+  })
+  ipcMain.handle('storeDelete', (event, key) => {
+    store.delete(key)
+  })
+  ipcMain.handle('storeHas', (event, key) => {
+    return store.has(key)
+  })
+  ipcMain.handle('storeClear', () => {
+    store.clear()
+  })
+}
+console.log('应用准备就绪:', store.get('translation.baidu.appid'))
+console.log('应用准备就绪:', store.has('translation.baidu.appid'))
+console.log('应用准备就绪:', store.path)
+
 // 当应用准备好时，调用 createWindow 函数创建窗口
 app.whenReady().then(() => {
   createWindow()
   createTray()
+  registerStoreIpcMain()
 })
 
 // 监听所有窗口关闭事件

@@ -2,38 +2,20 @@ const routes = [
   { path: '/', redirect: '/settings' },
   {
     path: '/settings',
-    redirect: '/settings/translation/setting',
+    redirect: '/settings/translation',
     component: () => import('layouts/SettingMainLayout.vue'),
     children: [
       {
         path: 'translation',
-        redirect: '/settings/translation/setting',
-        component: () => import('components/SideMenuTranslation.vue'),
-        children: [
-          {
-            path: 'setting',
-            component: () => import('pages/TranslationSettings.vue'),
-          },
-          {
-            path: 'source',
-            component: () => import('pages/TranslationSource.vue'),
-          },
-        ],
+        component: () => import('pages/Translate.vue'),
       },
       {
         path: 'screenshot',
-        redirect: '/settings/screenshot/setting',
-        component: () => import('components/SideMenuScreenshot.vue'),
-        children: [
-          {
-            path: 'setting',
-            component: () => import('pages/ScreenshotSettings.vue'),
-          },
-          {
-            path: 'source',
-            component: () => import('pages/ScreenshotSource.vue'),
-          },
-        ],
+        component: () => import('pages/Screenshot.vue'),
+      },
+      {
+        path: 'setting',
+        component: () => import('pages/Setting.vue'),
       },
     ],
   },

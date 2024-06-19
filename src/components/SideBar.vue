@@ -6,7 +6,7 @@
     bordered
     :mini="true"
     :mini-width="68.5"
-    class="bg-grey-3 q-pt-lg"
+    class="bg-grey-4 q-pt-lg"
   >
     <div>
       <q-list padding>
@@ -25,8 +25,8 @@
         <q-item
           clickable
           v-ripple
-          :active="link === 'camera'"
-          @click="link = 'camera'"
+          :active="link === 'screenshot'"
+          @click="link = 'screenshot'"
           to="/settings/screenshot"
         >
           <q-item-section avatar class="items-center">
@@ -37,11 +37,12 @@
         <q-item
           clickable
           v-ripple
-          :active="link === 'send'"
-          @click="link = 'send'"
+          :active="link === 'setting'"
+          @click="link = 'setting'"
+          to="/settings/setting"
         >
           <q-item-section avatar class="items-center">
-            <q-icon name="send" />
+            <q-icon name="settings" />
           </q-item-section>
         </q-item>
 

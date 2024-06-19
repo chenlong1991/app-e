@@ -1,0 +1,258 @@
+<template>
+  <q-page class="fit no-wrap column items-center">
+    <div class="fit row no-wrap justify-center col">
+      <q-card flat class="list q-my-md q-ml-md">
+        <q-card-actions vertical>
+          <q-list class="rounded-borders">
+            <q-item
+              clickable
+              v-ripple
+              :active="link === 'baidu'"
+              @click="link = 'baidu'"
+              active-class="bg-grey-4 text-grey-10"
+              class="full-width row justify-between items-center"
+            >
+              <q-avatar size="24px">
+                <img src="/百度云.png" />
+              </q-avatar>
+              <div class="q-py-xs">百度翻译</div>
+              <q-toggle v-model="translation.baidu.isEnable" />
+            </q-item>
+
+            <q-item
+              clickable
+              v-ripple
+              :active="link === 'ali'"
+              @click="link = 'ali'"
+              active-class="bg-grey-4 text-grey-10"
+              class="full-width row justify-between items-center"
+            >
+              <q-avatar size="24px">
+                <img src="/1.阿里云-蓝.png" />
+              </q-avatar>
+              <div class="q-py-xs">阿里云翻译</div>
+              <q-toggle v-model="translation.ali.isEnable" />
+            </q-item>
+
+            <q-item
+              clickable
+              v-ripple
+              :active="link === 'cozecn'"
+              @click="link = 'cozecn'"
+              active-class="bg-grey-4 text-grey-10"
+              class="full-width row justify-between items-center"
+            >
+              <q-avatar size="24px">
+                <img src="/1扣子.png" />
+              </q-avatar>
+              <div class="q-py-xs">扣子国内版</div>
+              <q-toggle v-model="translation.cozecn.isEnable" />
+            </q-item>
+
+            <q-item
+              clickable
+              v-ripple
+              :active="link === 'coze'"
+              @click="link = 'coze'"
+              active-class="bg-grey-4 text-grey-10"
+              class="full-width row justify-between items-center"
+            >
+              <q-avatar size="24px">
+                <img src="/1扣子.png" />
+              </q-avatar>
+              <div class="q-py-xs">扣子国外版</div>
+              <q-toggle v-model="translation.coze.isEnable" />
+            </q-item>
+          </q-list>
+        </q-card-actions>
+      </q-card>
+
+      <q-card flat class="col q-ma-md">
+        <q-card-section
+          ><q-tab-panels v-model="link" animated>
+            <q-tab-panel name="baidu" class="fit column justify-center">
+              <div class="row items-center q-my-md">
+                <div class="col-3 text-right">APP ID：</div>
+                <q-input
+                  dense
+                  v-model="translation.baidu.appid"
+                  filled
+                  :type="isPwd.baidu.appidIsPwd ? 'password' : 'text'"
+                  style="width: 300px"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="
+                        isPwd.baidu.appidIsPwd ? 'visibility_off' : 'visibility'
+                      "
+                      class="cursor-pointer"
+                      @click="isPwd.baidu.appidIsPwd = !isPwd.baidu.appidIsPwd"
+                    />
+                  </template>
+                </q-input>
+              </div>
+              <div class="row items-center">
+                <div class="col-3 text-right">Secret Key：</div>
+                <q-input
+                  dense
+                  v-model="translation.baidu.key"
+                  filled
+                  :type="isPwd.baidu.secretKeyIsPwd ? 'password' : 'text'"
+                  style="width: 300px"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="
+                        isPwd.baidu.secretKeyIsPwd
+                          ? 'visibility_off'
+                          : 'visibility'
+                      "
+                      class="cursor-pointer"
+                      @click="
+                        isPwd.baidu.secretKeyIsPwd = !isPwd.baidu.secretKeyIsPwd
+                      "
+                    />
+                  </template>
+                </q-input>
+              </div>
+              <div class="q-ma-md self-end">
+                <q-btn
+                  color="grey-4"
+                  text-color="black"
+                  label="验证"
+                  size="xs"
+                  padding="xs md"
+                />
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="ali" class="fit column justify-center">
+              <div class="row items-center q-my-md">
+                <div class="col-3 text-right">Key ID：</div>
+                <q-input
+                  dense
+                  v-model="translation.ali.keyId"
+                  filled
+                  :type="isPwd.ali.keyIdIsPwd ? 'password' : 'text'"
+                  style="width: 300px"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="
+                        isPwd.ali.keyIdIsPwd ? 'visibility_off' : 'visibility'
+                      "
+                      class="cursor-pointer"
+                      @click="isPwd.ali.keyIdIsPwd = !isPwd.ali.keyIdIsPwd"
+                    />
+                  </template>
+                </q-input>
+              </div>
+              <div class="row items-center">
+                <div class="col-3 text-right">Key Secret：</div>
+                <q-input
+                  dense
+                  v-model="translation.ali.keySecret"
+                  filled
+                  :type="isPwd.ali.secretKeyIsPwd ? 'password' : 'text'"
+                  style="width: 300px"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="
+                        isPwd.ali.secretKeyIsPwd
+                          ? 'visibility_off'
+                          : 'visibility'
+                      "
+                      class="cursor-pointer"
+                      @click="
+                        isPwd.ali.secretKeyIsPwd = !isPwd.ali.secretKeyIsPwd
+                      "
+                    />
+                  </template>
+                </q-input>
+              </div>
+              <div class="q-ma-md self-end">
+                <q-btn
+                  color="grey-4"
+                  text-color="black"
+                  label="验证"
+                  size="xs"
+                  padding="xs md"
+                />
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="cozecn">
+              <div class="text-h6">Movies</div>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </q-tab-panel>
+
+            <q-tab-panel name="coze">
+              <div class="text-h6">Movies</div>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </q-tab-panel>
+          </q-tab-panels></q-card-section
+        >
+      </q-card>
+    </div>
+    <div class="self-end q-mr-md q-mb-md">
+      <q-btn
+        color="primary"
+        label="保存"
+        size="sm"
+        @click="save(translation)"
+      />
+    </div>
+  </q-page>
+</template>
+
+<script setup>
+import { onMounted, reactive, ref } from 'vue'
+import { electronStoreVue } from 'src/tools/electronStore.js'
+
+const link = ref('baidu')
+const isPwd = reactive({
+  baidu: {
+    appidIsPwd: true,
+    secretKeyIsPwd: true,
+  },
+  ali: {
+    keyIdIsPwd: true,
+    secretKeyIsPwd: true,
+  },
+})
+
+const translation = ref({
+  baidu: {
+    appid: '',
+    key: '',
+    isEnable: true,
+  },
+  ali: {
+    keyId: '',
+    keySecret: '',
+    isEnable: false,
+  },
+  cozecn: {
+    isEnable: false,
+  },
+  coze: {
+    isEnable: false,
+  },
+})
+
+async function save(translation) {
+  await electronStoreVue.storeSet('translation', translation.value)
+}
+
+onMounted(async () => {
+  translation.value = await electronStoreVue.storeGet('translation')
+  console.log(translation.value)
+})
+</script>
+
+<style lang="scss" scoped>
+.list {
+  width: 210px;
+}
+</style>

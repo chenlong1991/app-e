@@ -30,7 +30,7 @@
       </q-list>
     </q-card-actions>
   </q-card>
-  <router-view></router-view>
+  <router-view class="bg-grey-2"></router-view>
 </template>
 <script setup>
 import { ref, reactive } from 'vue'

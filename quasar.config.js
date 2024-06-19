@@ -47,8 +47,13 @@ export default configure((ctx) => {
     devServer: { open: true }, // 自动打开浏览器窗口
     // Quasar 框架配置
     framework: {
-      config: {}, // 全局配置
-      plugins: [], // Quasar 插件
+      config: {
+        notify: {
+          position: 'top', // 通知位置，可选值：'top'、'bottom'、'left'、'right'
+        },
+      }, // 全局配置
+      plugins: ['Notify'],
+      // Quasar 插件
     },
     // 动画配置
     animations: [],

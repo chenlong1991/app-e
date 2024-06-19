@@ -30,7 +30,7 @@
       </q-list>
     </q-card-actions>
   </q-card>
-  <router-view></router-view>
+  <router-view class="bg-grey-2"></router-view>
 </template>
 <script setup>
 import { ref, reactive } from 'vue'
@@ -38,6 +38,6 @@ const link = ref('settings')
 </script>
 <style lang="scss" scoped>
 .my-card {
-  width: 190px;
+  min-width: 190px;
 }
 </style>

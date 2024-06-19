@@ -57,6 +57,7 @@ module.exports = {
 
   // 自定义规则
   rules: {
+    'vue/multi-word-component-names': 'off',
     // 一行最多160个字符
     'max-len': ['error', { code: 160 }],
     // 关闭 prefer-promise-reject-errors 规则

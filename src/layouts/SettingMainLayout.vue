@@ -5,7 +5,7 @@
       <WinClose v-if="$q.platform.is.win"></WinClose>
     </q-header>
     <SideBar></SideBar>
-    <q-page-container class="fit row no-wrap">
+    <q-page-container class="fit row no-wrap bg-grey-2">
       <router-view />
     </q-page-container>
   </q-layout>
