@@ -16,13 +16,19 @@ const store = new Store({
   defaults: {
     translation: {
       baidu: {
-        appid: 'abcdfrtghyt1111',
-        key: 'asdfgh',
-        isEnable: false,
+        appid: '19911216',
+        key: 'chenlong',
+        isEnable: true,
       },
       ali: {
         keyId: '',
         keySecret: '',
+        isEnable: false,
+      },
+      cozecn: {
+        isEnable: false,
+      },
+      coze: {
         isEnable: false,
       },
     },
@@ -127,23 +133,14 @@ function createTray() {
 }
 
 // electron-store 方法
-function registerStoreIpcMain() {
-  ipcMain.handle('storeGet', (event, key) => {
-    return store.get(key)
-  })
-  ipcMain.handle('storeSet', (event, key, value) => {
-    store.set(key, value)
-  })
-  ipcMain.handle('storeDelete', (event, key) => {
-    store.delete(key)
-  })
-  ipcMain.handle('storeHas', (event, key) => {
-    return store.has(key)
-  })
-  ipcMain.handle('storeClear', () => {
-    store.clear()
-  })
-}
+ipcMain.handle('storeGet', async (event, key) => {
+  return await store.get(key)
+})
+ipcMain.handle('storeSet', async (event, key, value) => {
+  console.log('保存', key, value) // 添加日志
+  await store.set(key, value)
+})
+
 console.log('应用准备就绪:', store.get('translation.baidu.appid'))
 console.log('应用准备就绪:', store.has('translation.baidu.appid'))
 console.log('应用准备就绪:', store.path)
@@ -152,7 +149,6 @@ console.log('应用准备就绪:', store.path)
 app.whenReady().then(() => {
   createWindow()
   createTray()
-  registerStoreIpcMain()
 })
 
 // 监听所有窗口关闭事件

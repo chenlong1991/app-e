@@ -122,6 +122,7 @@
                   label="验证"
                   size="xs"
                   padding="xs md"
+                  @click="verifyConnectivity()"
                 />
               </div>
             </q-tab-panel>
@@ -196,21 +197,19 @@
       </q-card>
     </div>
     <div class="self-end q-mr-md q-mb-md">
-      <q-btn
-        color="primary"
-        label="保存"
-        size="sm"
-        @click="save(translation)"
-      />
+      <q-btn color="primary" label="保存" size="sm" @click="save()" />
     </div>
   </q-page>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
-import { electronStoreVue } from 'src/tools/electronStore.js'
+import { onMounted, reactive, ref, toRaw } from 'vue'
+import { useQuasar } from 'quasar'
 
+const $q = useQuasar()
 const link = ref('baidu')
+
+// 密码显示控制
 const isPwd = reactive({
   baidu: {
     appidIsPwd: true,
@@ -222,6 +221,7 @@ const isPwd = reactive({
   },
 })
 
+// 翻译源配置数据
 const translation = ref({
   baidu: {
     appid: '',
@@ -241,13 +241,41 @@ const translation = ref({
   },
 })
 
-async function save(translation) {
-  await electronStoreVue.storeSet('translation', translation.value)
+// 验证翻译配置连通性
+function verifyConnectivity() {
+  console.log('验证', translation.value.baidu.appid)
 }
 
-onMounted(async () => {
-  translation.value = await electronStoreVue.storeGet('translation')
-  console.log(translation.value)
+// 保存翻译配置
+function save() {
+  console.log('哈哈哈', toRaw(translation.value))
+  window.electron.ipcRenderer
+    .invoke('storeSet', 'translation', toRaw(translation.value))
+    .catch((err) => {
+      $q.notify({
+        type: 'negative',
+        message: '保存翻译配置失败:' + err.message,
+        timeout: 2000,
+      })
+    })
+}
+
+onMounted(() => {
+  // 获取翻译配置
+  window.electron.ipcRenderer
+    .invoke('storeGet', 'translation')
+    .then((res) => {
+      console.log('妮妮', res)
+      // 赋值给翻译配置数据
+      translation.value = res
+    })
+    .catch((err) => {
+      $q.notify({
+        type: 'negative',
+        message: '获取翻译配置失败:' + err.message,
+        timeout: 2000,
+      })
+    })
 })
 </script>
 
