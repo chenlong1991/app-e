@@ -10,7 +10,7 @@
           outlined
           placeholder=""
           dense
-          model-value=""
+          v-model="settings.wordTranslation"
           style="width: 300px"
         >
           <template v-slot:append>
@@ -29,7 +29,7 @@
           outlined
           placeholder="Placeholder"
           dense
-          model-value=""
+          v-model="settings.screenshotTranslation"
           style="width: 300px"
         >
           <template v-slot:append>
@@ -48,7 +48,7 @@
           outlined
           placeholder="Placeholder"
           dense
-          model-value=""
+          v-model="settings.enterTranslation"
           style="width: 300px"
         >
           <template v-slot:append>
@@ -65,8 +65,8 @@
       <div class="col-8">
         <q-select
           outlined
-          v-model="model"
-          :options="['自动检测', '中文', 'English', '日本語', '한국어']"
+          v-model="settings.targetLanguage"
+          :options="opt.targetLanguageOpt"
           dense
           options-dense
           class="custom"
@@ -81,8 +81,8 @@
       <div class="col-8">
         <q-select
           outlined
-          v-model="model"
-          :options="['居中', '鼠标位置']"
+          v-model="settings.translationWindowPosition"
+          :options="opt.translationWindowPositionOpt"
           dense
           options-dense
           class="custom"
@@ -97,8 +97,8 @@
       <div class="col-8">
         <q-select
           outlined
-          v-model="model"
-          :options="['200px', '250px', '300px', '350px', '400px']"
+          v-model="settings.translationWindowWidth"
+          :options="opt.translationWindowWidthOpt"
           dense
           options-dense
           class="custom"
@@ -113,8 +113,8 @@
       <div class="col-8">
         <q-select
           outlined
-          v-model="model"
-          :options="['不记录', '50', '100', '200', '500']"
+          v-model="settings.historyCapacity"
+          :options="opt.historyCapacityOpt"
           dense
           options-dense
           class="custom"
@@ -125,7 +125,67 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref, toRaw, watch } from 'vue'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
+
+// 下拉选项
+const opt = ref({
+  targetLanguageOpt: ['自动检测', '中文', 'English', '日本語', '한국어'],
+  translationWindowPositionOpt: ['居中', '鼠标位置'],
+  translationWindowWidthOpt: ['200px', '250px', '300px', '350px', '400px'],
+  historyCapacityOpt: ['不记录', '50', '100', '200', '500'],
+})
+
+// 设置配置数据
+const settings = ref({
+  wordTranslation: '1',
+  screenshotTranslation: '1',
+  enterTranslation: '1',
+  targetLanguage: opt.value.targetLanguageOpt[0],
+  translationWindowPosition: opt.value.translationWindowPositionOpt[0],
+  translationWindowWidth: opt.value.translationWindowWidthOpt[0],
+  historyCapacity: opt.value.historyCapacityOpt[0],
+})
+
+// 保存设置配置
+function save() {
+  console.log('哈哈哈', toRaw(settings.value))
+  window.electron.ipcRenderer
+    .invoke('storeSet', 'settings', toRaw(settings.value))
+    .catch((err) => {
+      $q.notify({
+        type: 'negative',
+        message: '保存设置配置失败:' + err.message,
+        timeout: 2000,
+      })
+    })
+}
+
+// 监听设置配置变化并保存
+watch(settings, (newValue, oldValue) => {
+  console.log('设置配置变化:', toRaw(newValue), toRaw(oldValue))
+  save()
+})
+
+onMounted(() => {
+  // 获取翻译配置
+  window.electron.ipcRenderer
+    .invoke('storeGet', 'settings')
+    .then((res) => {
+      console.log('获取设置', res)
+      // 赋值给翻译配置数据
+      settings.value = res
+    })
+    .catch((err) => {
+      $q.notify({
+        type: 'negative',
+        message: '获取翻译配置失败:' + err.message,
+        timeout: 2000,
+      })
+    })
+})
 </script>
 
 <style scoped>

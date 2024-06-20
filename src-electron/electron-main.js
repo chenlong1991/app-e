@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Tray, nativeImage, Menu } from 'electron' // 从 electron 模块中导入 app 和 BrowserWindow
+import { app, BrowserWindow, ipcMain, Menu, nativeImage, Tray } from 'electron' // 从 electron 模块中导入 app 和 BrowserWindow
 import path from 'node:path' // 从 node:path 模块中导入 path
 import os from 'node:os' // 从 node:os 模块中导入 os
 import { fileURLToPath } from 'node:url' // 从 node:url 模块中导入 fileURLToPath
@@ -14,6 +14,7 @@ const currentDir = fileURLToPath(new URL('.', import.meta.url))
 const store = new Store({
   encryptionKey: 'CEHNLONG19911216.',
   defaults: {
+    // 翻译源默认值
     translation: {
       baidu: {
         appid: '19911216',
@@ -31,6 +32,16 @@ const store = new Store({
       coze: {
         isEnable: false,
       },
+    },
+    // 设置默认值
+    settings: {
+      wordTranslation: '1',
+      screenshotTranslation: '1',
+      enterTranslation: '1',
+      targetLanguage: '自动检测',
+      translationWindowPosition: '居中',
+      translationWindowWidth: '200px',
+      historyCapacity: '不记录',
     },
   },
 })
