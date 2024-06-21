@@ -203,7 +203,15 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, toRaw } from 'vue'
+import {
+  onBeforeMount,
+  onBeforeUpdate,
+  onMounted,
+  onUpdated,
+  reactive,
+  ref,
+  toRaw,
+} from 'vue'
 import { useQuasar } from 'quasar'
 
 const $q = useQuasar()
@@ -248,7 +256,7 @@ function verifyConnectivity() {
 
 // 保存翻译配置
 function save() {
-  console.log('哈哈哈', toRaw(translation.value))
+  console.log('保存翻译源配置', toRaw(translation.value))
   window.electron.ipcRenderer
     .invoke('storeSet', 'translation', toRaw(translation.value))
     .catch((err) => {
@@ -265,9 +273,9 @@ onMounted(() => {
   window.electron.ipcRenderer
     .invoke('storeGet', 'translation')
     .then((res) => {
-      console.log('妮妮', res)
+      console.log('读取数据源配置', res)
       // 赋值给翻译配置数据
-      translation.value = res
+      Object.assign(translation.value, res)
     })
     .catch((err) => {
       $q.notify({

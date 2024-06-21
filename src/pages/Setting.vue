@@ -121,6 +121,13 @@
         ></q-select>
       </div>
     </div>
+    <div
+      class="q-mt-md full-width row no-wrap flex-center"
+      style="height: 40px"
+    >
+      <div class="q-mr-xs col-3 text-right self-center">历史记录容量：</div>
+      <div class="col-8"><kbd>⌘</kbd> + <kbd>S</kbd></div>
+    </div>
   </q-page>
 </template>
 
@@ -151,7 +158,7 @@ const settings = ref({
 
 // 保存设置配置
 function save() {
-  console.log('哈哈哈', toRaw(settings.value))
+  console.log('保存配置', settings.value)
   window.electron.ipcRenderer
     .invoke('storeSet', 'settings', toRaw(settings.value))
     .catch((err) => {
@@ -164,7 +171,7 @@ function save() {
 }
 
 // 监听设置配置变化并保存
-watch(settings, (newValue, oldValue) => {
+watch(settings.value, (newValue, oldValue) => {
   console.log('设置配置变化:', toRaw(newValue), toRaw(oldValue))
   save()
 })
@@ -174,9 +181,11 @@ onMounted(() => {
   window.electron.ipcRenderer
     .invoke('storeGet', 'settings')
     .then((res) => {
+      console.log('赋值前', settings.value)
       console.log('获取设置', res)
       // 赋值给翻译配置数据
-      settings.value = res
+      Object.assign(settings.value, res)
+      console.log('赋值后', settings.value)
     })
     .catch((err) => {
       $q.notify({
