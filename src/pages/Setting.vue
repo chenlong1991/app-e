@@ -1,66 +1,42 @@
 <template>
   <q-page class="fit justify-center col q-pt-md">
-    <div
-      class="q-mt-md full-width row no-wrap flex-center"
-      style="height: 40px"
-    >
+    <div class="q-mt-md full-width row no-wrap flex-center">
       <div class="q-mr-xs col-3 text-right self-center">划词翻译：</div>
       <div class="col-8">
-        <q-input
-          outlined
-          placeholder=""
-          dense
-          v-model="settings.wordTranslation"
-          style="width: 300px"
-        >
-          <template v-slot:append>
-            <q-icon name="close" @click="text = ''" class="cursor-pointer" />
+        <q-field outlined dense class="custom">
+          <template v-slot:control>
+            <q-icon name="img:icons/keys/command.png" size="28px" /> +
+            <q-icon name="img:icons/keys/w.png" size="28px" />
+            <q-icon name="img:icons/keys/ctrl.png" size="28px" />
           </template>
-        </q-input>
+        </q-field>
       </div>
     </div>
-    <div
-      class="q-mt-md full-width row no-wrap flex-center"
-      style="height: 40px"
-    >
+    <div class="q-mt-md full-width row no-wrap flex-center">
       <div class="q-mr-xs col-3 text-right self-center">截图翻译：</div>
       <div class="col-8">
-        <q-input
-          outlined
-          placeholder="Placeholder"
-          dense
-          v-model="settings.screenshotTranslation"
-          style="width: 300px"
-        >
-          <template v-slot:append>
-            <q-icon name="close" @click="text = ''" class="cursor-pointer" />
+        <q-field outlined dense class="custom">
+          <template v-slot:control>
+            <q-icon name="img:icons/keys/alt.png" size="28px" /> +
+            <q-icon name="img:icons/keys/shift.png" size="28px" />
+            <q-icon name="img:icons/keys/ctrl.png" size="28px" />
           </template>
-        </q-input>
+        </q-field>
       </div>
     </div>
-    <div
-      class="q-mt-md full-width row no-wrap flex-center"
-      style="height: 40px"
-    >
+    <div class="q-mt-md full-width row no-wrap flex-center">
       <div class="q-mr-xs col-3 text-right self-center">输入翻译：</div>
       <div class="col-8">
-        <q-input
-          outlined
-          placeholder="Placeholder"
-          dense
-          v-model="settings.enterTranslation"
-          style="width: 300px"
-        >
-          <template v-slot:append>
-            <q-icon name="close" @click="text = ''" class="cursor-pointer" />
+        <q-field outlined dense class="custom">
+          <template v-slot:control>
+            <q-icon name="img:icons/keys/alt.png" size="28px" /> +
+            <q-icon name="img:icons/keys/shift.png" size="28px" />
+            <q-icon name="img:icons/keys/ctrl.png" size="28px" />
           </template>
-        </q-input>
+        </q-field>
       </div>
     </div>
-    <div
-      class="q-mt-md full-width row no-wrap flex-center"
-      style="height: 40px"
-    >
+    <div class="q-mt-md full-width row no-wrap flex-center">
       <div class="q-mr-xs col-3 text-right self-center">目标语言：</div>
       <div class="col-8">
         <q-select
@@ -73,10 +49,7 @@
         ></q-select>
       </div>
     </div>
-    <div
-      class="q-mt-md full-width row no-wrap flex-center"
-      style="height: 40px"
-    >
+    <div class="q-mt-md full-width row no-wrap flex-center">
       <div class="q-mr-xs col-3 text-right self-center">翻译窗口位置：</div>
       <div class="col-8">
         <q-select
@@ -89,10 +62,7 @@
         ></q-select>
       </div>
     </div>
-    <div
-      class="q-mt-md full-width row no-wrap flex-center"
-      style="height: 40px"
-    >
+    <div class="q-mt-md full-width row no-wrap flex-center">
       <div class="q-mr-xs col-3 text-right self-center">翻译窗口宽度：</div>
       <div class="col-8">
         <q-select
@@ -105,10 +75,7 @@
         ></q-select>
       </div>
     </div>
-    <div
-      class="q-mt-md full-width row no-wrap flex-center"
-      style="height: 40px"
-    >
+    <div class="q-mt-md full-width row no-wrap flex-center">
       <div class="q-mr-xs col-3 text-right self-center">历史记录容量：</div>
       <div class="col-8">
         <q-select
@@ -120,13 +87,6 @@
           class="custom"
         ></q-select>
       </div>
-    </div>
-    <div
-      class="q-mt-md full-width row no-wrap flex-center"
-      style="height: 40px"
-    >
-      <div class="q-mr-xs col-3 text-right self-center">历史记录容量：</div>
-      <div class="col-8"><kbd>⌘</kbd> + <kbd>S</kbd></div>
     </div>
   </q-page>
 </template>
