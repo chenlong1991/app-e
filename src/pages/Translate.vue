@@ -204,6 +204,7 @@
 
 <script setup>
 import {
+  nextTick,
   onBeforeMount,
   onBeforeUpdate,
   onMounted,

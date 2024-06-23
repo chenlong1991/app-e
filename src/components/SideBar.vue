@@ -51,6 +51,7 @@
           v-ripple
           :active="link === 'drafts'"
           @click="link = 'drafts'"
+          to="/settings/test"
         >
           <q-item-section avatar class="items-center">
             <q-icon name="drafts" />
