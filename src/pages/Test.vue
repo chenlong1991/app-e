@@ -1,19 +1,21 @@
 <script setup>
 import { ref } from 'vue'
 
-const shortcut1 = ref([])
+const shortcut1 = ref([1, 2, ''])
 const shortcut2 = ref([])
 
-function recordShortcut(event, shortcut) {
+const recordShortcut = ($event, shortcut) => {
   // 清空当前快捷键
-  shortcut.value = []
-
+  // shortcut.value = []
+  console.log('shortcut：', shortcut.value)
   // 记录按下的键
-  if (event.ctrlKey || event.metaKey) {
+  if ($event.ctrlKey || $event.metaKey) {
     console.log('CommandOrControl')
-    shortcut.value.push('CommandOrControl')
+    shortcut1.value.push('CommandOrControl')
   }
-  if (event.shiftKey) {
+  if ($event.shiftKey) {
+    console.log('Shift:', $event.shiftKey)
+    console.log('shortcut：', shortcut.value)
     shortcut.value.push('Shift')
   }
   if (event.altKey) {
@@ -34,7 +36,7 @@ function recordShortcut(event, shortcut) {
   ) {
     shortcut.value.push(event.code)
   }
-  console.log('按键列表', shortcut.value[0])
+  console.log('按键列表', shortcut1.value[0])
 }
 </script>
 
@@ -47,7 +49,7 @@ function recordShortcut(event, shortcut) {
           <template v-slot:control>
             <div
               class="shortcut-display"
-              @keydown.prevent="recordShortcut($event, shortcut1)"
+              @keydown.prevent="(event) => recordShortcut(event, shortcut1)"
               tabindex="0"
             >
               <span v-for="(item, index) in shortcut1" :key="index">
