@@ -4,7 +4,7 @@ import { ref } from 'vue'
 const shortcut1 = ref([])
 const shortcut2 = ref([])
 
-const recordShortcut = (event, shortcut) => {
+function recordShortcut(event, shortcut) {
   // 清空当前快捷键
   shortcut.value = []
 
@@ -34,7 +34,7 @@ const recordShortcut = (event, shortcut) => {
   ) {
     shortcut.value.push(event.code)
   }
-  console.log('按键列表', shortcut.value)
+  console.log('按键列表', shortcut.value[0])
 }
 </script>
 
@@ -50,8 +50,8 @@ const recordShortcut = (event, shortcut) => {
               @keydown.prevent="recordShortcut($event, shortcut1)"
               tabindex="0"
             >
-              <span v-for="(key, index) in shortcut1" :key="index">
-                <q-icon size="24px" :name="`img:/icons/keys/${key}.png`" />
+              <span v-for="(item, index) in shortcut1" :key="index">
+                <q-icon size="24px" :name="`img:/icons/keys/${item}.png`" />
                 <span v-if="index < shortcut1.length - 1" class="plus">+</span>
               </span>
             </div>
@@ -69,8 +69,8 @@ const recordShortcut = (event, shortcut) => {
               @keydown.prevent="recordShortcut($event, shortcut2)"
               tabindex="0"
             >
-              <span v-for="(key, index) in shortcut2" :key="index">
-                <q-icon size="24px" :name="`img:/icons/keys/${key}.png`" />
+              <span v-for="(item, index) in shortcut2" :key="index">
+                <q-icon size="24px" :name="`img:/icons/keys/${item}.png`" />
                 <span v-if="index < shortcut2.length - 1" class="plus">+</span>
               </span>
             </div>
@@ -83,10 +83,8 @@ const recordShortcut = (event, shortcut) => {
 
 <style scoped lang="scss">
 .shortcut-display {
-  padding: 10px;
-  font-size: 16px;
-  margin-bottom: 10px;
-  width: 300px;
+  height: 100%;
+  width: 100%;
   border: 1px solid #ccc;
   display: flex;
   align-items: center;
