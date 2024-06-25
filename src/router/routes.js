@@ -19,7 +19,7 @@ const routes = [
       },
       {
         path: 'test',
-        component: () => import('pages/Test1.vue'),
+        component: () => import('pages/Test.vue'),
       },
     ],
   },

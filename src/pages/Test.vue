@@ -1,43 +1,61 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 
-let shortcut1 = ref([1, 2, ''])
+let shortcut1 = ref([])
 const shortcut2 = ref([])
+const ll = ref({
+  Backquote: '`',
+  Digit0: '0',
+  Digit1: '1',
+  Digit2: '2',
+  Digit3: '3',
+  Digit4: '4',
+  Digit5: '5',
+  Digit6: '6',
+  Digit7: '7',
+  Digit8: '8',
+  Digit9: '9',
+  KeyA: 'a',
+  KeyB: 'b',
+  KeyC: 'c',
+  KeyD: 'd',
+  KeyE: 'e',
+  KeyF: 'f',
+  KeyG: 'g',
+  KeyH: 'h',
+  KeyI: 'i',
+  KeyJ: 'j',
+  KeyK: 'k',
+  KeyL: 'l',
+  KeyM: 'm',
+  KeyN: 'n',
+  KeyO: 'o',
+  KeyP: 'p',
+  KeyQ: 'q',
+  KeyR: 'r',
+  KeyS: 's',
+  KeyT: 't',
+  KeyU: 'u',
+  KeyV: 'v',
+  KeyW: 'w',
+  KeyX: 'x',
+  KeyY: 'y',
+  KeyZ: 'z',
+  CapsLock: 'CapsLock',
+  ShiftLeft: 'shift-mac',
+  ShiftRight: 'shift-mac',
+  ControlLeft: 'control',
+  AltLeft: 'option',
+  MetaLeft: 'command',
+  MetaRight: 'command',
+  AltRight: 'option',
+})
 
 const recordShortcut = (shortcut, event) => {
-  // 清空当前快捷键
-  // shortcut.value = []
-  console.log('按键列表', shortcut1.value)
-  console.log('shortcut：', shortcut.value)
-  // 记录按下的键
-  if (event.ctrlKey || event.metaKey) {
-    console.log('CommandOrControl')
-    shortcut1.value.push('CommandOrControl')
-  }
-  if (event.shiftKey) {
-    console.log('Shift:', event.shiftKey)
-    console.log('shortcut：', shortcut.value)
-    shortcut.value.push('Shift')
-  }
-  if (event.altKey) {
-    shortcut.value.push('Alt')
-  }
-  if (
-    event.code &&
-    ![
-      'ControlLeft',
-      'ControlRight',
-      'ShiftLeft',
-      'ShiftRight',
-      'AltLeft',
-      'AltRight',
-      'MetaLeft',
-      'MetaRight',
-    ].includes(event.code)
-  ) {
-    shortcut.value.push(event.code)
-  }
-  console.log('按键列表', shortcut1)
+  // shortcut.code.push(event.code)
+  // shortcut.key.push(event.key)
+  shortcut.push(ll.value[event.code])
+  console.log('按键列表', toRaw(shortcut))
 }
 </script>
 
@@ -69,7 +87,7 @@ const recordShortcut = (shortcut, event) => {
           <template v-slot:control>
             <div
               class="shortcut-display"
-              @keydown.prevent="recordShortcut($event, shortcut2)"
+              @keydown.prevent="recordShortcut(shortcut2, $event)"
               tabindex="0"
             >
               <span v-for="(item, index) in shortcut2" :key="index">
