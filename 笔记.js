@@ -163,7 +163,7 @@ ppp = {
   CapsLock: 'CapsLock',
   ShiftLeft: 'Shift',
   ShiftRight: 'Shift',
-  ControlLeft: 'Control',
+  ControlLeft: 'Control', //ctrl
   AltLeft: 'Alt',
   MetaLeft: 'Meta',
   MetaRight: 'Meta',

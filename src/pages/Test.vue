@@ -1,8 +1,12 @@
 <script setup>
 import { ref, toRaw } from 'vue'
+import { useQuasar } from 'quasar'
 
-let shortcut1 = ref([])
+const $q = useQuasar()
+
+let shortcut1 = ref({})
 const shortcut2 = ref([])
+// 按键映射
 const ll = ref({
   Backquote: '`',
   Digit0: '0',
@@ -41,21 +45,43 @@ const ll = ref({
   KeyX: 'x',
   KeyY: 'y',
   KeyZ: 'z',
-  CapsLock: 'CapsLock',
-  ShiftLeft: 'shift-mac',
-  ShiftRight: 'shift-mac',
-  ControlLeft: 'control',
-  AltLeft: 'option',
-  MetaLeft: 'command',
-  MetaRight: 'command',
-  AltRight: 'option',
+  CapsLock: 'capsLock',
+  ShiftLeft: 'shift-mac', // shift
+  ShiftRight: 'shift-mac', // shift
+  ControlLeft: 'control', // ctrl
+  AltLeft: 'option', // alt
+  MetaLeft: 'command', // win
+  MetaRight: 'command', // win
+  AltRight: 'option', // alt
 })
 
+// win or mac重新映射
+function winOrMac() {
+  if ($q.platform.is.win) {
+    ll.value.ShiftLeft = 'shift'
+    ll.value.ShiftRight = 'shift'
+    ll.value.ControlLeft = 'ctrl'
+    ll.value.MetaLeft = 'win'
+    ll.value.MetaRight = 'win'
+    ll.value.AltRight = 'alt'
+    ll.value.AltLeft = 'alt'
+  }
+}
+
 const recordShortcut = (shortcut, event) => {
+  winOrMac()
   // shortcut.code.push(event.code)
   // shortcut.key.push(event.key)
-  shortcut.push(ll.value[event.code])
+  // shortcut.push(ll.value[event.code])
   console.log('按键列表', toRaw(shortcut))
+  if (!shortcut.value[event.key]) {
+    console.log(`Key pressed: ${event.key}`)
+    // 执行你的快捷键功能逻辑
+    // ...
+
+    // 标记此键为已按下
+    shortcut.value[event.key] = true
+  }
 }
 </script>
 
