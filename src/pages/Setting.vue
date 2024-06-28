@@ -5,7 +5,10 @@
       <div class="col-8">
         <q-field outlined dense class="custom">
           <template v-slot:control>
-            <ShortcutInput v-model="translateShortcut" />
+            <ShortcutInput
+              v-model="translateShortcut"
+              :default-key-list="['ctrl', 'shift', '1']"
+            />
           </template>
         </q-field>
       </div>
@@ -15,9 +18,10 @@
       <div class="col-8">
         <q-field outlined dense class="custom">
           <template v-slot:control>
-            <q-icon name="img:icons/keys/alt.png" size="28px" /> +
-            <q-icon name="img:icons/keys/shift.png" size="28px" />
-            <q-icon name="img:icons/keys/ctrl.png" size="28px" />
+            <ShortcutInput
+              v-model="screenshotTranslation"
+              :default-key-list="['ctrl', 'shift', '2']"
+            />
           </template>
         </q-field>
       </div>
@@ -27,9 +31,10 @@
       <div class="col-8">
         <q-field outlined dense class="custom">
           <template v-slot:control>
-            <q-icon name="img:icons/keys/alt.png" size="28px" /> +
-            <q-icon name="img:icons/keys/shift.png" size="28px" />
-            <q-icon name="img:icons/keys/ctrl.png" size="28px" />
+            <ShortcutInput
+              v-model="enterTranslation"
+              :default-key-list="['ctrl', 'shift', '3']"
+            />
           </template>
         </q-field>
       </div>
@@ -96,6 +101,8 @@ import ShortcutInput from '../components/ShortcutInput.vue'
 
 const $q = useQuasar()
 const translateShortcut = ref(['ctrl', 'shift', 't'])
+const screenshotTranslation = ref(['ctrl', 'shift', 's'])
+const enterTranslation = ref(['ctrl', 'shift', 'e'])
 
 // 下拉选项
 const opt = ref({
@@ -159,6 +166,6 @@ onMounted(() => {
 
 <style scoped>
 .custom {
-  width: 300px;
+  width: 260px;
 }
 </style>

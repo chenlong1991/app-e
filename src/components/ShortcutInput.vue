@@ -5,20 +5,30 @@
     @keydown="onKeyDown"
     @keyup="onKeyUp"
   >
-    <span v-for="(item, index) in keyList" :key="index">
-      <q-icon
-        :size="`${keyOrder.includes(item) ? '28px' : '22px'}`"
-        :name="`img:/icons/keys/${item}.png`"
-      />
-      <span v-if="index < keyList.length - 1" class="plus">&nbsp;+&nbsp;</span>
-    </span>
-    <q-btn
-      dense
-      flat
-      icon="replay_10"
-      @click="keyList = props.defaultKeyList"
-      class="offset-md-8"
-    />
+    <div class="col-10">
+      <span v-for="(item, index) in sortedKeyList" :key="index">
+        <q-icon
+          :size="`${keyOrder.includes(item) ? '28px' : '22px'}`"
+          :name="`img:/icons/keys/${item}.png`"
+        />
+        <span v-if="index < sortedKeyList.length - 1" class="plus"
+          >&nbsp;+&nbsp;</span
+        >
+      </span>
+    </div>
+    <div class="row justify-end col-2">
+      <q-btn
+        padding="2px 2px"
+        size="10px"
+        flat
+        icon="replay"
+        @click="keyList = props.defaultKeyList"
+      >
+        <q-tooltip anchor="center right" self="center left" :offset="[15, 10]">
+          重置
+        </q-tooltip>
+      </q-btn>
+    </div>
   </div>
 </template>
 
@@ -31,7 +41,10 @@ const $q = useQuasar()
 const keyList = defineModel()
 const oldKeyList = keyList.value
 const props = defineProps({
-  defaultKeyList: Array,
+  defaultKeyList: {
+    type: Array,
+    default: () => ['alt', '1'],
+  },
 })
 const pressedKeys = ref([])
 
@@ -77,8 +90,6 @@ const keyMapping = $q.platform.is.win
       ShiftRight: 'shift',
       ControlLeft: 'ctrl',
       AltLeft: 'alt',
-      MetaLeft: 'win',
-      MetaRight: 'win',
       AltRight: 'alt',
     }
   : {
@@ -133,7 +144,6 @@ const keyOrder = $q.platform.is.win
 const sortedKeyList = computed(() => {
   // 按照 keyOrder 对 keyList 进行排序
   return [...keyList.value].sort((a, b) => {
-    console.log('keyOrder: ', keyOrder)
     if (keyOrder.indexOf(a) === -1) return 1 // 如果 a 不在 keyOrder 中，排在后面
     if (keyOrder.indexOf(b) === -1) return -1 // 如果 b 不在 keyOrder 中，排在前面
     return keyOrder.indexOf(a) - keyOrder.indexOf(b) // 否则按照 keyOrder 中的顺序排序
@@ -177,7 +187,6 @@ const onKeyDown = (event) => {
 }
 
 const onKeyUp = (event) => {
-  console.log('oldKeyList: ', oldKeyList)
   // 在松开按键时，重置组合键生效状态
   isShortcutActivated.value = false
   pressedKeys.value = []
