@@ -5,7 +5,7 @@
       <div class="col-8">
         <q-field outlined dense class="custom">
           <template v-slot:control>
-            <ShortcutInput v-model:shortcut="translateShortcut" />
+            <ShortcutInput v-model="translateShortcut" />
           </template>
         </q-field>
       </div>
@@ -95,7 +95,7 @@ import { useQuasar } from 'quasar'
 import ShortcutInput from '../components/ShortcutInput.vue'
 
 const $q = useQuasar()
-const translateShortcut = ref([])
+const translateShortcut = ref(['ctrl', 'shift', 't'])
 
 // 下拉选项
 const opt = ref({

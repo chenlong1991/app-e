@@ -25,31 +25,6 @@
         </q-field>
       </div>
     </div>
-    <div class="q-mt-md full-width row no-wrap flex-center">
-      <div class="q-mr-xs col-3 text-right self-center">截图翻译：</div>
-      <div class="col-8">
-        <q-field outlined dense>
-          <template v-slot:control>
-            <div
-              class="shortcut-display"
-              tabindex="0"
-              @keydown="onKeyDown"
-              @keyup="onKeyUp"
-            >
-              <span v-for="(item, index) in sortedKeyList" :key="index">
-                <q-icon
-                  :size="`${keyOrder.includes(item) ? '28px' : '22px'}`"
-                  :name="`img:/icons/keys/${item}.png`"
-                />
-                <span v-if="index < sortedKeyList.length - 1" class="plus"
-                  >&nbsp;+&nbsp;</span
-                >
-              </span>
-            </div>
-          </template>
-        </q-field>
-      </div>
-    </div>
   </q-page>
 </template>
 
@@ -156,10 +131,11 @@ const keyMapping = $q.platform.is.win
 // 定义按键顺序
 const keyOrder = $q.platform.is.win
   ? ['ctrl', 'shift', 'alt', 'win']
-  : ['control', 'option', 'shift-mac', 'command']
+  : ['control', 'shift-mac', 'option', 'command']
 const sortedKeyList = computed(() => {
   // 按照 keyOrder 对 keyList 进行排序
   return [...keyList.value].sort((a, b) => {
+    console.log('keyOrder: ', keyOrder)
     if (keyOrder.indexOf(a) === -1) return 1 // 如果 a 不在 keyOrder 中，排在后面
     if (keyOrder.indexOf(b) === -1) return -1 // 如果 b 不在 keyOrder 中，排在前面
     return keyOrder.indexOf(a) - keyOrder.indexOf(b) // 否则按照 keyOrder 中的顺序排序
@@ -171,7 +147,14 @@ const isValidShortcut = (keys) => {
   // 至少包含一个修饰键
   const hasModifier = keys.some(
     (key) =>
-      key === 'ctrl' || key === 'alt' || key === 'shift' || key === 'win',
+      key === 'ctrl' ||
+      key === 'alt' ||
+      key === 'shift' ||
+      key === 'win' ||
+      key === 'control' ||
+      key === 'shift-mac' ||
+      key === 'option' ||
+      key === 'command',
   )
   // 只能有一个数字或字母键
   const hasOneLetterOrDigit =

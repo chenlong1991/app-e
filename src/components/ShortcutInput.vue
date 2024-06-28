@@ -1,13 +1,24 @@
 <template>
   <div
-    class="shortcut-display"
+    class="shortcut-display row"
     tabindex="0"
     @keydown="onKeyDown"
     @keyup="onKeyUp"
   >
-    <span v-for="(item, index) in sortedKeyList" :key="index">
-      <q-icon size="24px" :name="`img:/icons/keys/${item}.png`" />
+    <span v-for="(item, index) in keyList" :key="index">
+      <q-icon
+        :size="`${keyOrder.includes(item) ? '28px' : '22px'}`"
+        :name="`img:/icons/keys/${item}.png`"
+      />
+      <span v-if="index < keyList.length - 1" class="plus">&nbsp;+&nbsp;</span>
     </span>
+    <q-btn
+      dense
+      flat
+      icon="replay_10"
+      @click="keyList = props.defaultKeyList"
+      class="offset-md-8"
+    />
   </div>
 </template>
 
@@ -17,15 +28,11 @@ import { useQuasar } from 'quasar'
 
 const $q = useQuasar()
 
+const keyList = defineModel()
+const oldKeyList = keyList.value
 const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: () => [],
-  },
+  defaultKeyList: Array,
 })
-
-const emit = defineEmits(['update:modelValue'])
-
 const pressedKeys = ref([])
 
 const keyMapping = $q.platform.is.win
@@ -119,28 +126,33 @@ const keyMapping = $q.platform.is.win
       MetaRight: 'command',
       AltRight: 'option',
     }
-
 // 定义按键顺序
 const keyOrder = $q.platform.is.win
   ? ['ctrl', 'shift', 'alt', 'win']
-  : ['control', 'option', 'shift-mac', 'command']
-
+  : ['control', 'shift-mac', 'option', 'command']
 const sortedKeyList = computed(() => {
-  return [...props.modelValue].sort((a, b) => {
-    if (keyOrder.indexOf(a) === -1) return 1
-    if (keyOrder.indexOf(b) === -1) return -1
-    return keyOrder.indexOf(a) - keyOrder.indexOf(b)
+  // 按照 keyOrder 对 keyList 进行排序
+  return [...keyList.value].sort((a, b) => {
+    console.log('keyOrder: ', keyOrder)
+    if (keyOrder.indexOf(a) === -1) return 1 // 如果 a 不在 keyOrder 中，排在后面
+    if (keyOrder.indexOf(b) === -1) return -1 // 如果 b 不在 keyOrder 中，排在前面
+    return keyOrder.indexOf(a) - keyOrder.indexOf(b) // 否则按照 keyOrder 中的顺序排序
   })
 })
-
 // 新增状态，用于判断组合键是否已经生效
 const isShortcutActivated = ref(false)
-
 const isValidShortcut = (keys) => {
   // 至少包含一个修饰键
   const hasModifier = keys.some(
     (key) =>
-      key === 'ctrl' || key === 'alt' || key === 'shift' || key === 'win',
+      key === 'ctrl' ||
+      key === 'alt' ||
+      key === 'shift' ||
+      key === 'win' ||
+      key === 'control' ||
+      key === 'shift-mac' ||
+      key === 'option' ||
+      key === 'command',
   )
   // 只能有一个数字或字母键
   const hasOneLetterOrDigit =
@@ -153,33 +165,39 @@ const onKeyDown = (event) => {
   const key = keyMapping[event.code]
   if (key && !pressedKeys.value.includes(key)) {
     pressedKeys.value.push(key)
-    // 使用 emit 更新 props.modelValue
-    emit('update:modelValue', [...pressedKeys.value])
+    keyList.value = [...pressedKeys.value]
+  }
+
+  // 在按下按键时，如果组合键已经生效，则不再进行判断
+  if (isShortcutActivated.value) return
+
+  if (isValidShortcut(pressedKeys.value)) {
+    isShortcutActivated.value = true // 组合键生效
   }
 }
 
 const onKeyUp = (event) => {
+  console.log('oldKeyList: ', oldKeyList)
   // 在松开按键时，重置组合键生效状态
   isShortcutActivated.value = false
   pressedKeys.value = []
 
-  // 如果组合键不合法，则清空 modelValue
-  if (!isValidShortcut(props.modelValue)) {
-    emit('update:modelValue', [])
+  // 如果组合键不合法，则清空 keyList
+  if (!isValidShortcut(keyList.value)) {
+    keyList.value = oldKeyList
+    console.log('keyList: ', keyList.value)
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .shortcut-display {
   height: 100%;
   width: 100%;
   display: flex;
   align-items: center;
 }
-
-.shortcut-display > span:not(:last-child)::before {
-  content: '+';
-  margin-right: 4px;
+.shortcut-display:focus {
+  outline: none; /* 移除边框 */
 }
 </style>
