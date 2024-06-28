@@ -1,90 +1,3 @@
-<script setup>
-import { ref, toRaw } from 'vue'
-import { useQuasar } from 'quasar'
-
-const $q = useQuasar()
-
-let shortcut1 = ref({})
-const shortcut2 = ref([])
-// 按键映射
-const ll = ref({
-  Backquote: '`',
-  Digit0: '0',
-  Digit1: '1',
-  Digit2: '2',
-  Digit3: '3',
-  Digit4: '4',
-  Digit5: '5',
-  Digit6: '6',
-  Digit7: '7',
-  Digit8: '8',
-  Digit9: '9',
-  KeyA: 'a',
-  KeyB: 'b',
-  KeyC: 'c',
-  KeyD: 'd',
-  KeyE: 'e',
-  KeyF: 'f',
-  KeyG: 'g',
-  KeyH: 'h',
-  KeyI: 'i',
-  KeyJ: 'j',
-  KeyK: 'k',
-  KeyL: 'l',
-  KeyM: 'm',
-  KeyN: 'n',
-  KeyO: 'o',
-  KeyP: 'p',
-  KeyQ: 'q',
-  KeyR: 'r',
-  KeyS: 's',
-  KeyT: 't',
-  KeyU: 'u',
-  KeyV: 'v',
-  KeyW: 'w',
-  KeyX: 'x',
-  KeyY: 'y',
-  KeyZ: 'z',
-  CapsLock: 'capsLock',
-  ShiftLeft: 'shift-mac', // shift
-  ShiftRight: 'shift-mac', // shift
-  ControlLeft: 'control', // ctrl
-  AltLeft: 'option', // alt
-  MetaLeft: 'command', // win
-  MetaRight: 'command', // win
-  AltRight: 'option', // alt
-})
-
-// win or mac重新映射
-function winOrMac() {
-  if ($q.platform.is.win) {
-    ll.value.ShiftLeft = 'shift'
-    ll.value.ShiftRight = 'shift'
-    ll.value.ControlLeft = 'ctrl'
-    ll.value.MetaLeft = 'win'
-    ll.value.MetaRight = 'win'
-    ll.value.AltRight = 'alt'
-    ll.value.AltLeft = 'alt'
-  }
-}
-
-const recordShortcut = (shortcut, event) => {
-  winOrMac()
-  // shortcut.code.push(event.code)
-  // shortcut.key.push(event.key)
-  // shortcut.push(ll.value[event.code])
-  console.log('按键列表', toRaw(shortcut))
-  if (!shortcut.value[event.key]) {
-    console.log(`Key pressed: ${event.key}`)
-    // 执行你的快捷键功能逻辑
-    // ...
-
-    // 标记此键为已按下
-    shortcut.value[event.key] = true
-  }
-}
-</script>
-
 <template>
   <q-page class="fit justify-center col q-pt-md">
     <div class="q-mt-md full-width row no-wrap flex-center">
@@ -94,12 +7,18 @@ const recordShortcut = (shortcut, event) => {
           <template v-slot:control>
             <div
               class="shortcut-display"
-              @keydown="recordShortcut(shortcut1, $event)"
               tabindex="0"
+              @keydown="onKeyDown"
+              @keyup="onKeyUp"
             >
-              <span v-for="(item, index) in shortcut1" :key="index">
-                <q-icon size="24px" :name="`img:/icons/keys/${item}.png`" />
-                <span v-if="index < shortcut1.length - 1" class="plus">+</span>
+              <span v-for="(item, index) in keyList" :key="index">
+                <q-icon
+                  :size="`${keyOrder.includes(item) ? '28px' : '22px'}`"
+                  :name="`img:/icons/keys/${item}.png`"
+                />
+                <span v-if="index < keyList.length - 1" class="plus"
+                  >&nbsp;+&nbsp;</span
+                >
               </span>
             </div>
           </template>
@@ -107,18 +26,24 @@ const recordShortcut = (shortcut, event) => {
       </div>
     </div>
     <div class="q-mt-md full-width row no-wrap flex-center">
-      <div class="q-mr-xs col-3 text-right self-center">划词翻译：</div>
+      <div class="q-mr-xs col-3 text-right self-center">截图翻译：</div>
       <div class="col-8">
         <q-field outlined dense>
           <template v-slot:control>
             <div
               class="shortcut-display"
-              @keydown.prevent="recordShortcut(shortcut2, $event)"
               tabindex="0"
+              @keydown="onKeyDown"
+              @keyup="onKeyUp"
             >
-              <span v-for="(item, index) in shortcut2" :key="index">
-                <q-icon size="24px" :name="`img:/icons/keys/${item}.png`" />
-                <span v-if="index < shortcut2.length - 1" class="plus">+</span>
+              <span v-for="(item, index) in sortedKeyList" :key="index">
+                <q-icon
+                  :size="`${keyOrder.includes(item) ? '28px' : '22px'}`"
+                  :name="`img:/icons/keys/${item}.png`"
+                />
+                <span v-if="index < sortedKeyList.length - 1" class="plus"
+                  >&nbsp;+&nbsp;</span
+                >
               </span>
             </div>
           </template>
@@ -128,23 +53,169 @@ const recordShortcut = (shortcut, event) => {
   </q-page>
 </template>
 
-<style scoped lang="scss">
+<script setup>
+import { computed, ref, watch } from 'vue'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
+
+const keyList = ref([])
+const pressedKeys = ref([])
+
+const keyMapping = $q.platform.is.win
+  ? {
+      Digit0: '0',
+      Digit1: '1',
+      Digit2: '2',
+      Digit3: '3',
+      Digit4: '4',
+      Digit5: '5',
+      Digit6: '6',
+      Digit7: '7',
+      Digit8: '8',
+      Digit9: '9',
+      KeyA: 'a',
+      KeyB: 'b',
+      KeyC: 'c',
+      KeyD: 'd',
+      KeyE: 'e',
+      KeyF: 'f',
+      KeyG: 'g',
+      KeyH: 'h',
+      KeyI: 'i',
+      KeyJ: 'j',
+      KeyK: 'k',
+      KeyL: 'l',
+      KeyM: 'm',
+      KeyN: 'n',
+      KeyO: 'o',
+      KeyP: 'p',
+      KeyQ: 'q',
+      KeyR: 'r',
+      KeyS: 's',
+      KeyT: 't',
+      KeyU: 'u',
+      KeyV: 'v',
+      KeyW: 'w',
+      KeyX: 'x',
+      KeyY: 'y',
+      KeyZ: 'z',
+      ShiftLeft: 'shift',
+      ShiftRight: 'shift',
+      ControlLeft: 'ctrl',
+      AltLeft: 'alt',
+      MetaLeft: 'win',
+      MetaRight: 'win',
+      AltRight: 'alt',
+    }
+  : {
+      Digit0: '0',
+      Digit1: '1',
+      Digit2: '2',
+      Digit3: '3',
+      Digit4: '4',
+      Digit5: '5',
+      Digit6: '6',
+      Digit7: '7',
+      Digit8: '8',
+      Digit9: '9',
+      KeyA: 'a',
+      KeyB: 'b',
+      KeyC: 'c',
+      KeyD: 'd',
+      KeyE: 'e',
+      KeyF: 'f',
+      KeyG: 'g',
+      KeyH: 'h',
+      KeyI: 'i',
+      KeyJ: 'j',
+      KeyK: 'k',
+      KeyL: 'l',
+      KeyM: 'm',
+      KeyN: 'n',
+      KeyO: 'o',
+      KeyP: 'p',
+      KeyQ: 'q',
+      KeyR: 'r',
+      KeyS: 's',
+      KeyT: 't',
+      KeyU: 'u',
+      KeyV: 'v',
+      KeyW: 'w',
+      KeyX: 'x',
+      KeyY: 'y',
+      KeyZ: 'z',
+      ShiftLeft: 'shift-mac',
+      ShiftRight: 'shift-mac',
+      ControlLeft: 'control',
+      AltLeft: 'option',
+      MetaLeft: 'command',
+      MetaRight: 'command',
+      AltRight: 'option',
+    }
+// 定义按键顺序
+const keyOrder = $q.platform.is.win
+  ? ['ctrl', 'shift', 'alt', 'win']
+  : ['control', 'option', 'shift-mac', 'command']
+const sortedKeyList = computed(() => {
+  // 按照 keyOrder 对 keyList 进行排序
+  return [...keyList.value].sort((a, b) => {
+    if (keyOrder.indexOf(a) === -1) return 1 // 如果 a 不在 keyOrder 中，排在后面
+    if (keyOrder.indexOf(b) === -1) return -1 // 如果 b 不在 keyOrder 中，排在前面
+    return keyOrder.indexOf(a) - keyOrder.indexOf(b) // 否则按照 keyOrder 中的顺序排序
+  })
+})
+// 新增状态，用于判断组合键是否已经生效
+const isShortcutActivated = ref(false)
+const isValidShortcut = (keys) => {
+  // 至少包含一个修饰键
+  const hasModifier = keys.some(
+    (key) =>
+      key === 'ctrl' || key === 'alt' || key === 'shift' || key === 'win',
+  )
+  // 只能有一个数字或字母键
+  const hasOneLetterOrDigit =
+    keys.filter((key) => /^[a-zA-Z0-9]$/.test(key)).length === 1
+  // 必须同时满足以上两个条件
+  return hasModifier && hasOneLetterOrDigit
+}
+
+const onKeyDown = (event) => {
+  const key = keyMapping[event.code]
+  if (key && !pressedKeys.value.includes(key)) {
+    pressedKeys.value.push(key)
+    keyList.value = [...pressedKeys.value]
+  }
+
+  // 在按下按键时，如果组合键已经生效，则不再进行判断
+  if (isShortcutActivated.value) return
+
+  if (isValidShortcut(pressedKeys.value)) {
+    isShortcutActivated.value = true // 组合键生效
+  }
+}
+
+const onKeyUp = (event) => {
+  // 在松开按键时，重置组合键生效状态
+  isShortcutActivated.value = false
+  pressedKeys.value = []
+
+  // 如果组合键不合法，则清空 keyList
+  if (!isValidShortcut(keyList.value)) {
+    keyList.value = []
+  }
+}
+</script>
+
+<style lang="scss" scoped>
 .shortcut-display {
   height: 100%;
   width: 100%;
-  border: 1px solid #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: text;
 }
-
 .shortcut-display:focus {
-  outline: none;
-}
-
-.plus {
-  font-size: 18px;
-  margin: 0 5px;
+  outline: none; /* 移除边框 */
 }
 </style>

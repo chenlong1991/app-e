@@ -5,9 +5,7 @@
       <div class="col-8">
         <q-field outlined dense class="custom">
           <template v-slot:control>
-            <q-icon name="img:icons/keys/command.png" size="28px" /> +
-            <q-icon name="img:icons/keys/w.png" size="28px" />
-            <q-icon name="img:icons/keys/ctrl.png" size="28px" />
+            <ShortcutInput v-model:shortcut="translateShortcut" />
           </template>
         </q-field>
       </div>
@@ -94,8 +92,10 @@
 <script setup>
 import { onMounted, ref, toRaw, watch } from 'vue'
 import { useQuasar } from 'quasar'
+import ShortcutInput from '../components/ShortcutInput.vue'
 
 const $q = useQuasar()
+const translateShortcut = ref([])
 
 // 下拉选项
 const opt = ref({

@@ -76,8 +76,6 @@ module.exports = {
         after: true,
       },
     ],
-    // 缩进规则，使用 2 个空格，SwitchCase 需要缩进一级
-    indent: [2, 2, { SwitchCase: 1 }],
     // 逗号规则
     'comma-dangle': [
       2,

@@ -7,7 +7,6 @@
   >
     <span v-for="(item, index) in sortedKeyList" :key="index">
       <q-icon size="24px" :name="`img:/icons/keys/${item}.png`" />
-      <span v-if="index < sortedKeyList.length - 1" class="plus">+</span>
     </span>
   </div>
 </template>
@@ -27,7 +26,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const keyList = ref([])
 const pressedKeys = ref([])
 
 const keyMapping = $q.platform.is.win
@@ -121,20 +119,23 @@ const keyMapping = $q.platform.is.win
       MetaRight: 'command',
       AltRight: 'option',
     }
+
 // 定义按键顺序
 const keyOrder = $q.platform.is.win
   ? ['ctrl', 'shift', 'alt', 'win']
   : ['control', 'option', 'shift-mac', 'command']
+
 const sortedKeyList = computed(() => {
-  // 按照 keyOrder 对 keyList 进行排序
-  return [...keyList.value].sort((a, b) => {
-    if (keyOrder.indexOf(a) === -1) return 1 // 如果 a 不在 keyOrder 中，排在后面
-    if (keyOrder.indexOf(b) === -1) return -1 // 如果 b 不在 keyOrder 中，排在前面
-    return keyOrder.indexOf(a) - keyOrder.indexOf(b) // 否则按照 keyOrder 中的顺序排序
+  return [...props.modelValue].sort((a, b) => {
+    if (keyOrder.indexOf(a) === -1) return 1
+    if (keyOrder.indexOf(b) === -1) return -1
+    return keyOrder.indexOf(a) - keyOrder.indexOf(b)
   })
 })
+
 // 新增状态，用于判断组合键是否已经生效
 const isShortcutActivated = ref(false)
+
 const isValidShortcut = (keys) => {
   // 至少包含一个修饰键
   const hasModifier = keys.some(
@@ -152,15 +153,7 @@ const onKeyDown = (event) => {
   const key = keyMapping[event.code]
   if (key && !pressedKeys.value.includes(key)) {
     pressedKeys.value.push(key)
-    // eslint-disable-next-line vue/no-mutating-props
-    props.modelValue = [...pressedKeys.value]
-  }
-
-  // 在按下按键时，如果组合键已经生效，则不再进行判断
-  if (isShortcutActivated.value) return
-
-  if (isValidShortcut(pressedKeys.value)) {
-    isShortcutActivated.value = true // 组合键生效
+    // 使用 emit 更新 props.modelValue
     emit('update:modelValue', [...pressedKeys.value])
   }
 }
@@ -170,27 +163,23 @@ const onKeyUp = (event) => {
   isShortcutActivated.value = false
   pressedKeys.value = []
 
-  // 如果组合键不合法，则清空 keyList
-  if (!isValidShortcut(keyList.value)) {
-    keyList.value = []
+  // 如果组合键不合法，则清空 modelValue
+  if (!isValidShortcut(props.modelValue)) {
+    emit('update:modelValue', [])
   }
 }
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    keyList.value = [...newValue]
-  },
-  { immediate: true },
-)
 </script>
 
 <style scoped>
 .shortcut-display {
-  height: 60px;
-  width: 200px;
+  height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+}
+
+.shortcut-display > span:not(:last-child)::before {
+  content: '+';
+  margin-right: 4px;
 }
 </style>
