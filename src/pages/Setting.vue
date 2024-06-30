@@ -126,15 +126,7 @@ const settings = ref({
 // 保存设置配置
 function save() {
   console.log('保存配置', settings.value)
-  window.electron.ipcRenderer
-    .invoke('storeSet', 'settings', toRaw(settings.value))
-    .catch((err) => {
-      $q.notify({
-        type: 'negative',
-        message: '保存设置配置失败:' + err.message,
-        timeout: 2000,
-      })
-    })
+  window.api.sendMsg('保存配置', 'settings', toRaw(settings.value))
 }
 
 // 监听设置配置变化并保存
@@ -145,22 +137,10 @@ watch(settings.value, (newValue, oldValue) => {
 
 onMounted(() => {
   // 获取翻译配置
-  window.electron.ipcRenderer
-    .invoke('storeGet', 'settings')
-    .then((res) => {
-      console.log('赋值前', settings.value)
-      console.log('获取设置', res)
-      // 赋值给翻译配置数据
-      Object.assign(settings.value, res)
-      console.log('赋值后', settings.value)
-    })
-    .catch((err) => {
-      $q.notify({
-        type: 'negative',
-        message: '获取翻译配置失败:' + err.message,
-        timeout: 2000,
-      })
-    })
+  window.api.receiveMsg('加载配置', (dataT, dataS) => {
+    console.log('读取配置: ', dataT, dataS)
+    Object.assign(settings.value, dataS)
+  })
 })
 </script>
 

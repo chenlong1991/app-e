@@ -95,6 +95,20 @@ function createWindow() {
       mainWindow.webContents.closeDevTools()
     })
   }
+
+  // electron-store 方法
+  ipcMain.on('保存配置', (event, key, value) => {
+    store.set(key, value)
+  })
+
+  mainWindow.webContents.on('did-navigate-in-page', () => {
+    console.log('ye mian jia zai wan cheng')
+    mainWindow.webContents.send(
+      '加载配置',
+      store.get('translation'),
+      store.get('settings'),
+    )
+  })
   // 监听窗口关闭事件
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -143,19 +157,6 @@ function createTray() {
   })
 }
 
-// electron-store 方法
-ipcMain.handle('storeGet', async (event, key) => {
-  return await store.get(key)
-})
-ipcMain.handle('storeSet', async (event, key, value) => {
-  console.log('保存', key, value) // 添加日志
-  await store.set(key, value)
-})
-
-console.log('应用准备就绪:', store.get('translation.baidu.appid'))
-console.log('应用准备就绪:', store.has('translation.baidu.appid'))
-console.log('应用准备就绪:', store.path)
-
 // 当应用准备好时，调用 createWindow 函数创建窗口
 app.whenReady().then(() => {
   createWindow()
@@ -178,8 +179,7 @@ app.on('activate', () => {
 })
 
 // 监听渲染进程的消息
-ipcMain.on('window-control', (event, action) => {
-  console.log('Received window control action:', action) // 添加日志
+ipcMain.on('窗口控制', (event, action) => {
   switch (action) {
     case 'minimize':
       mainWindow.minimize()

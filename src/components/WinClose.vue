@@ -11,15 +11,15 @@
 
 <script setup>
 const minimize = () => {
-  window.electron.controlWindow('minimize')
+  window.api.sendMsg('窗口控制', 'minimize')
 }
 
 const maximize = () => {
-  window.electron.controlWindow('maximize')
+  window.api.sendMsg('窗口控制', 'maximize')
 }
 
 const close = () => {
-  window.electron.controlWindow('close')
+  window.api.sendMsg('窗口控制', 'close')
 }
 </script>
 

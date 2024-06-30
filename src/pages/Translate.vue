@@ -203,20 +203,8 @@
 </template>
 
 <script setup>
-import {
-  computed,
-  nextTick,
-  onBeforeMount,
-  onBeforeUpdate,
-  onMounted,
-  onUpdated,
-  reactive,
-  ref,
-  toRaw,
-} from 'vue'
-import { useQuasar } from 'quasar'
+import { onMounted, reactive, ref, toRaw } from 'vue'
 
-const $q = useQuasar()
 const link = ref('baidu')
 
 // 密码显示控制
@@ -259,33 +247,15 @@ function verifyConnectivity() {
 // 保存翻译配置
 function save() {
   console.log('保存翻译源配置', toRaw(translation.value))
-  window.electron.ipcRenderer
-    .invoke('storeSet', 'translation', toRaw(translation.value))
-    .catch((err) => {
-      $q.notify({
-        type: 'negative',
-        message: '保存翻译配置失败:' + err.message,
-        timeout: 2000,
-      })
-    })
+  window.api.sendMsg('保存配置', 'translation', toRaw(translation.value))
 }
 
 onMounted(() => {
   // 获取翻译配置
-  window.electron.ipcRenderer
-    .invoke('storeGet', 'translation')
-    .then((res) => {
-      console.log('读取数据源配置', res)
-      // 赋值给翻译配置数据
-      Object.assign(translation.value, res)
-    })
-    .catch((err) => {
-      $q.notify({
-        type: 'negative',
-        message: '获取翻译配置失败:' + err.message,
-        timeout: 2000,
-      })
-    })
+  window.api.receiveMsg('加载配置', (dataT, dataS) => {
+    console.log('读取数据源配置', dataT, dataS)
+    Object.assign(translation.value, dataT)
+  })
 })
 </script>
 
