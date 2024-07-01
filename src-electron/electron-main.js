@@ -1,4 +1,12 @@
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, Tray } from 'electron' // 从 electron 模块中导入 app 和 BrowserWindow
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  nativeImage,
+  Tray,
+  globalShortcut,
+} from 'electron' // 从 electron 模块中导入 app 和 BrowserWindow
 import path from 'node:path' // 从 node:path 模块中导入 path
 import os from 'node:os' // 从 node:os 模块中导入 os
 import { fileURLToPath } from 'node:url' // 从 node:url 模块中导入 fileURLToPath
@@ -96,19 +104,15 @@ function createWindow() {
     })
   }
 
-  // electron-store 方法
-  ipcMain.on('保存配置', (event, key, value) => {
-    store.set(key, value)
+  // 注册全局快捷键
+  globalShortcut.register('Option+5', () => {
+    mainWindow.webContents.send('截图事件')
   })
 
-  mainWindow.webContents.on('did-navigate-in-page', () => {
-    console.log('ye mian jia zai wan cheng')
-    mainWindow.webContents.send(
-      '加载配置',
-      store.get('translation'),
-      store.get('settings'),
-    )
+  ipcMain.handle('更新翻译源数据', async (event) => {
+    return store.get('translation')
   })
+
   // 监听窗口关闭事件
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -161,6 +165,14 @@ function createTray() {
 app.whenReady().then(() => {
   createWindow()
   createTray()
+  // // electron-store 方法
+  // ipcMain.on('保存配置', (event, key, value) => {
+  //   store.set(key, value)
+  // })
+  //
+  // ipcMain.on('组件已挂载', (event) => {
+  //   event.reply('加载配置', store.get('translation'), store.get('settings'))
+  // })
 })
 
 // 监听所有窗口关闭事件

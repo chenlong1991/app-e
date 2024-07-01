@@ -203,7 +203,14 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, toRaw } from 'vue'
+import {
+  onActivated,
+  onBeforeMount,
+  onMounted,
+  reactive,
+  ref,
+  toRaw,
+} from 'vue'
 
 const link = ref('baidu')
 
@@ -250,12 +257,14 @@ function save() {
   window.api.sendMsg('保存配置', 'translation', toRaw(translation.value))
 }
 
-onMounted(() => {
+onBeforeMount(async () => {
   // 获取翻译配置
-  window.api.receiveMsg('加载配置', (dataT, dataS) => {
-    console.log('读取数据源配置', dataT, dataS)
-    Object.assign(translation.value, dataT)
-  })
+  // window.api.receiveMsg('加载配置', (dataT, dataS) => {
+  //   console.log('读取数据源配置', dataT, dataS)
+  //   Object.assign(translation.value, dataT)
+  // })
+  // window.api.sendMsg('组件已挂载', 'translation')
+  translation.value = await window.api.invoke('更新翻译源数据')
 })
 </script>
 
