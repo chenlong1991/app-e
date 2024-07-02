@@ -1,11 +1,11 @@
 import {
   app,
   BrowserWindow,
+  desktopCapturer,
   ipcMain,
   Menu,
   nativeImage,
   Tray,
-  globalShortcut,
 } from 'electron' // 从 electron 模块中导入 app 和 BrowserWindow
 import path from 'node:path' // 从 node:path 模块中导入 path
 import os from 'node:os' // 从 node:os 模块中导入 os
@@ -54,12 +54,13 @@ const store = new Store({
   },
 })
 
-let mainWindow // 声明主窗口变量
+let mainW // 声明主窗口变量
+let screenshotW // 声明截图窗口变量
 let tray // 声明托盘变量
 
 // 创建主窗口的函数
-function createWindow() {
-  mainWindow = new BrowserWindow({
+function settingWindow() {
+  mainW = new BrowserWindow({
     // 设置窗口图标
     icon: path.resolve(currentDir, 'icons/icon.png'),
     // 设置窗口宽度
@@ -88,34 +89,42 @@ function createWindow() {
 
   // 如果是开发环境，加载开发环境的 URL
   if (process.env.DEV) {
-    mainWindow.loadURL(process.env.APP_URL)
+    mainW.loadURL(process.env.APP_URL)
   } else {
     // 否则加载本地的 index.html 文件
-    mainWindow.loadFile('index.html')
+    mainW.loadFile('index.html')
   }
 
   // 如果是调试模式，打开开发者工具
   if (process.env.DEBUGGING) {
-    mainWindow.webContents.openDevTools()
+    mainW.webContents.openDevTools()
   } else {
     // 否则监听开发者工具打开事件，并在打开时关闭开发者工具
-    mainWindow.webContents.on('devtools-opened', () => {
-      mainWindow.webContents.closeDevTools()
+    mainW.webContents.on('devtools-opened', () => {
+      mainW.webContents.closeDevTools()
     })
   }
 
-  // 注册全局快捷键
+  /*  // 注册全局快捷键
   globalShortcut.register('Option+5', () => {
     mainWindow.webContents.send('截图事件')
-  })
+  })*/
 
   ipcMain.handle('更新翻译源数据', async (event) => {
     return store.get('translation')
   })
 
   // 监听窗口关闭事件
-  mainWindow.on('closed', () => {
-    mainWindow = null
+  mainW.on('closed', () => {
+    mainW = null
+  })
+}
+
+// 创建截图窗口的函数
+function screenshotWindow() {
+  screenshotW = new BrowserWindow({
+    width: 400,
+    height: 300,
   })
 }
 
@@ -132,10 +141,10 @@ function createTray() {
     {
       label: '设置', // 显示应用
       click: () => {
-        if (mainWindow) {
-          mainWindow.show() // 显示窗口
+        if (mainW) {
+          mainW.show() // 显示窗口
         } else {
-          createWindow()
+          settingWindow()
         }
       },
     },
@@ -153,40 +162,32 @@ function createTray() {
 
   // 监听托盘图标点击事件
   tray.on('click', () => {
-    if (mainWindow) {
-      mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show() // 切换窗口显示/隐藏状态
+    if (mainW) {
+      mainW.isVisible() ? mainW.hide() : mainW.show() // 切换窗口显示/隐藏状态
     } else {
-      createWindow()
+      settingWindow()
     }
   })
 }
 
 // 当应用准备好时，调用 createWindow 函数创建窗口
-app.whenReady().then(() => {
-  createWindow()
+app.on('ready', async () => {
+  settingWindow()
   createTray()
-  // // electron-store 方法
-  // ipcMain.on('保存配置', (event, key, value) => {
-  //   store.set(key, value)
-  // })
-  //
-  // ipcMain.on('组件已挂载', (event) => {
-  //   event.reply('加载配置', store.get('translation'), store.get('settings'))
-  // })
 })
 
 // 监听所有窗口关闭事件
 app.on('window-all-closed', () => {
-  mainWindow = null // 隐藏窗口
+  mainW = null // 隐藏窗口
 })
 
 // 监听应用激活事件（通常在 macOS 上，当点击 Dock 图标时触发）
 app.on('activate', () => {
   // 如果主窗口为 null，重新创建窗口
-  if (mainWindow === null) {
-    createWindow()
+  if (mainW === null) {
+    settingWindow()
   } else {
-    mainWindow.show() // 显示窗口
+    mainW.show() // 显示窗口
   }
 })
 
@@ -194,15 +195,22 @@ app.on('activate', () => {
 ipcMain.on('窗口控制', (event, action) => {
   switch (action) {
     case 'minimize':
-      mainWindow.minimize()
+      mainW.minimize()
       break
     case 'maximize':
-      mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize()
+      mainW.isMaximized() ? mainW.unmaximize() : mainW.maximize()
       break
     case 'close':
-      mainWindow.close()
+      mainW.close()
       break
     default:
       break
   }
+})
+
+// 监听截图事件
+ipcMain.handle('截图事件', async () => {
+  const sources = await desktopCapturer.getSources({ types: ['screen'] })
+  const screenSource = sources[0]
+  return screenSource.thumbnail.toDataURL()
 })
