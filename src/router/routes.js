@@ -1,5 +1,6 @@
 const routes = [
   { path: '/', redirect: '/settings' },
+  { path: '/screenshot', component: () => import('pages/Test.vue') },
   {
     path: '/settings',
     redirect: '/settings/translation',

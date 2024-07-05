@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer, desktopCapturer } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('api', {
   sendMsg: (channel, ...arg) => {
@@ -13,5 +13,4 @@ contextBridge.exposeInMainWorld('api', {
   invoke: (channel, ...arg) => {
     return ipcRenderer.invoke(channel, ...arg)
   },
-  screenshot: () => desktopCapturer,
 })

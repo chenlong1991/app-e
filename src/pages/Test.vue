@@ -1,29 +1,21 @@
 <template>
   <div>
-    <button @click="takeScreenshot">截图</button>
-    <img
-      v-if="screenshot"
-      :src="screenshot"
-      alt="Screenshot"
-      @click="card = true"
-    />
-    <q-dialog maximized v-model="card">
-      <q-img fit="fill" src="screenshot" />
-    </q-dialog>
+    <button>截图</button>
+    <img :src="srceenshot" alt="截图" />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-const screenshot = ref(null)
-const card = ref(false)
+const srceenshot = ref(null)
 
-const takeScreenshot = async () => {
-  // 调用electron的api，获取截图数据
-  screenshot.value = await window.api.invoke('截图事件')
-  console.log(screenshot.value)
-}
+onMounted(() => {
+  window.api.receiveMsg('截图事件', (msg, data) => {
+    srceenshot.value = msg
+    console.log('Received message:', msg, data) // 确保你在这里打印的是消息参数
+  })
+})
 </script>
 
 <style scoped>
